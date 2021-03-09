@@ -6,6 +6,7 @@
 #include <QStateMachine>
 #include <QState>
 #include <QDebug>
+#include "Transitions.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,12 +23,19 @@ public:
     static const int SIXTYSECONDS = 10;
 
 public slots:
-
-    void on_btnStart_clicked();
+    //void on_btnStart_clicked();
     void showDebug();
     void tik_tok();
+    //
+    void slotIdle2Cooking();
+    void slotCooking2Idle();
+    void slotCooking2Cooking();
+    void slotWorking2Stop();
+
 signals:
     void CountTimeChanged(int s);
+    void FinishedCooking();
+    void StopToIdle();
 
 private:
     Ui::MainWindow *ui;

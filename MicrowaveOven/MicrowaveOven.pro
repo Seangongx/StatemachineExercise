@@ -14,6 +14,7 @@ SOURCES += \
     mainwindow.cpp
 
 HEADERS += \
+    Transitions.h \
     digitalclock.h \
     mainwindow.h
 

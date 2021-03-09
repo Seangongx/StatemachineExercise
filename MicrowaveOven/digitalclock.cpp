@@ -31,6 +31,7 @@ void DigitalClock::showRestofTime(int s)
     //setDigitCount(5);
     if ((s % 2) == 0) { text[2] = ' ';}
     setSegmentStyle(Flat);// Outline, Filled and Flat
+    qDebug() << text << endl;
     display(text);
 }
 
