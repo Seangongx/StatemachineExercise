@@ -7,6 +7,7 @@
 #include <QState>
 #include <QDebug>
 #include "Transitions.h"
+#include <QtGlobal> // random number
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,19 +24,25 @@ public:
     static const int SIXTYSECONDS = 10;
 
 public slots:
-    //void on_btnStart_clicked();
+    // Class Slots
     void showDebug();
     void tik_tok();
-    //
+    void showDial();
+    int getRandom(int min, int max);
+    // State Slots:
     void slotIdle2Cooking();
+    void slotIdle2Defrost();
     void slotCooking2Idle();
     void slotCooking2Cooking();
     void slotWorking2Stop();
+    void slotDefrost2Cooking();
+    void slotStop2Idle();
 
 signals:
-    void CountTimeChanged(int s);
+    //void CountTimeChanged(int s);
     void FinishedCooking();
     void StopToIdle();
+    void DefrostToStart();
 
 private:
     Ui::MainWindow *ui;
@@ -49,6 +56,7 @@ private:
     QState * stateCooking;
     QState * stateIdle;
     QState * stateStop;
+    QState * stateDefrost;
 
 
 };

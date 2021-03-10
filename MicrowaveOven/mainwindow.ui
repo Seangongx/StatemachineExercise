@@ -35,6 +35,12 @@
       <height>100</height>
      </rect>
     </property>
+    <property name="segmentStyle">
+     <enum>QLCDNumber::Filled</enum>
+    </property>
+    <property name="value" stdset="0">
+     <double>0.000000000000000</double>
+    </property>
    </widget>
    <widget class="QPushButton" name="bthClock">
     <property name="geometry">
@@ -119,9 +125,30 @@
      <rect>
       <x>270</x>
       <y>320</y>
-      <width>251</width>
-      <height>141</height>
+      <width>250</width>
+      <height>140</height>
      </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>250</width>
+      <height>140</height>
+     </size>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <property name="invertedAppearance">
+     <bool>false</bool>
+    </property>
+    <property name="invertedControls">
+     <bool>false</bool>
+    </property>
+    <property name="wrapping">
+     <bool>false</bool>
+    </property>
+    <property name="notchesVisible">
+     <bool>false</bool>
     </property>
    </widget>
   </widget>

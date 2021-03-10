@@ -15,6 +15,7 @@ public:
 public slots:
     void showCurrentTime();
     void showRestofTime(int s);
+    void showCount(int s);
 };
 
 #endif // DIGITALCLOCK_H

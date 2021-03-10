@@ -14,9 +14,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     // States:
     stateWorking = new QState();
+    stateStop = new QState();
     stateCooking = new QState(stateWorking); //count down
     stateIdle = new QState(stateWorking); // display current time
-    stateStop = new QState();
+    stateDefrost = new QState(stateWorking);
 
     // StateMachine:
     mac->addState(stateWorking);
@@ -29,24 +30,20 @@ MainWindow::MainWindow(QWidget *parent)
     currentTimer->start(1000);
     connect(currentTimer, SIGNAL(timeout()), ui->lcdClock, SLOT(showCurrentTime()));
     connect(countTimer, SIGNAL(timeout()), this, SLOT(tik_tok()));
+    connect(ui->dial, SIGNAL(valueChanged(int)), ui->dial, SLOT(setValue(int)));
+    connect(ui->dial, SIGNAL(valueChanged(int)), this, SLOT(showDial()));
+    connect(ui->dial, SIGNAL(valueChanged(int)), ui->lcdClock, SLOT(showCount(int)));
 
     // Transitions:
     addTrans(stateIdle, stateCooking, ui->btnStart, SIGNAL(clicked()), this, SLOT(slotIdle2Cooking()));
     addTrans(stateCooking, stateIdle, this, SIGNAL(FinishedCooking()), this, SLOT(slotCooking2Idle()));
     addTrans(stateCooking, stateCooking, ui->btnStart, SIGNAL(clicked()), this, SLOT(slotCooking2Cooking()));
     addTrans(stateWorking, stateStop, ui->btnStop, SIGNAL(clicked()), this, SLOT(slotWorking2Stop()));
-
-    //stateIdle->addTransition(ui->btnStart, SIGNAL(clicked()),stateCooking);
-    //connect(stateCooking, SIGNAL(entered()), this, SLOT(slotStart2Cooking()));
-    //stateCooking->addTransition(this, SIGNAL(finishedCooking()), stateIdle);
-    //connect(stateIdle, SIGNAL(entered()), this, SLOT(slotCooking2Idle()));
-    //stateCooking->addTransition(ui->btnStart, SIGNAL(clicked()), stateCooking);
-    //connect(stateCooking, SIGNAL(entered()), this, SLOT(slotCooking2Cooking()));
-    //stateWorking->addTransition(ui->btnStop, SIGNAL(clicked()), stateStop);
-    //connect(stateStop, SIGNAL(entered()), this, SLOT(slotWorking2Stop()));
-
-    //stateStop->addTransition(this, SIGNAL(StopToIdle()), stateIdle);
-    addTrans(stateStop, stateIdle, this, SIGNAL(StopToIdle()));
+    stateStop->addTransition(stateWorking);
+    //addTrans(stateStop, stateIdle, this, SIGNAL(StopToIdle()), this, SLOT(slotStop2Idle()));
+    addTrans(stateIdle, stateDefrost, ui->btnDefrost, SIGNAL(clicked()), this, SLOT(slotIdle2Defrost()));
+    addTrans(stateDefrost, stateCooking, ui->btnStart, SIGNAL(clicked()), this, SLOT(slotDefrost2Cooking()));
+    // new:
 
     mac->start();
 }
@@ -57,14 +54,45 @@ MainWindow::~MainWindow()
 }
 
 
+void MainWindow::slotDefrost2Cooking() {
+    qDebug() << "slotDefrost2Cooking" << endl;
+    countTimer->start(1000);
+}
+
+void MainWindow::slotIdle2Cooking() {
+    qDebug() << "slotStart2Cooking" << endl;
+    m_secondCount = SIXTYSECONDS;
+    if(currentTimer->isActive())
+        currentTimer->stop();
+    countTimer->start(1000);
+}
+
+void MainWindow::slotIdle2Defrost() {
+    qDebug() << "slotIdle2Defrost" << endl;
+    if(currentTimer->isActive())
+        currentTimer->stop();
+    m_secondCount = getRandom(30, 120);
+    ui->lcdClock->showRestofTime(m_secondCount);
+}
+
 void MainWindow::slotWorking2Stop() {
     qDebug() << "slotWorking2Stop" << endl;
-    if(countTimer->isActive()) {
-        countTimer->stop();
-    }
-    currentTimer->start(1000);
+    countTimer->stop();
     m_secondCount = 0;
+    currentTimer->start(1000);
+    /*
+    qDebug() << " emit StopToIdle SIGNAL" << endl;
+    qDebug() << "working:" << stateWorking->active() << endl;
+    qDebug() << "Stop:" << stateStop->active() << endl;
+    qDebug() << "Idle:" << stateIdle->active() << endl;
+    qDebug() << "mac:" << stateIdle->active() << endl;
     emit StopToIdle();
+    */
+}
+
+void MainWindow::slotStop2Idle() {
+    qDebug() << "slotStop2Idle" << endl;
+    currentTimer->start(1000);
 }
 
 void MainWindow::slotCooking2Idle() {
@@ -76,19 +104,17 @@ void MainWindow::slotCooking2Idle() {
     m_secondCount = 0;
 }
 
-void MainWindow::slotIdle2Cooking() {
-    qDebug() << "slotStart2Cooking" << endl;
-    m_secondCount = SIXTYSECONDS;
-    if(currentTimer->isActive())
-        currentTimer->stop();
-    countTimer->start(1000);
-}
-
 void MainWindow::slotCooking2Cooking() {
     qDebug() << "slotCooking2Cooking" << endl;
     if(countTimer->isActive() && !currentTimer->isActive())
         qDebug() << m_secondCount << "+" << SIXTYSECONDS << endl;
         m_secondCount += SIXTYSECONDS;
+}
+
+void MainWindow::showDial() {
+    qDebug() << "showDial" << ui->dial->value() << endl;
+    if(currentTimer->isActive())
+        currentTimer->stop();
 }
 
 void MainWindow::tik_tok() {
@@ -103,13 +129,14 @@ void MainWindow::tik_tok() {
     ui->lcdClock->showRestofTime(m_secondCount);
 }
 
+int MainWindow::getRandom(int min,int max)
+{
+    qsrand(QTime(0, 0, 0).secsTo(QTime::currentTime()));
+    int num = qrand() % (max - min);
+    //qDebug() << num + min;
+    return num + min;
+}
+
 void MainWindow::showDebug() {
     qDebug() << "It is working!\n";
 }
-
-/*void MainWindow::on_btnStart_clicked()
-{
-    m_secondCount = SIXTYSECONDS;
-    currentTimer->stop();
-    countTimer->start();
-}*/
