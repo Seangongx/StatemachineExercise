@@ -13,8 +13,8 @@ public:
     DigitalClock(QWidget *parent = 0);
 
 public slots:
-    void showCurrentTime();
-    void showRestofTime(int s);
+    void showDefaultTime();
+    void showSettingTime(int s);
     void showCount(int s);
 };
 

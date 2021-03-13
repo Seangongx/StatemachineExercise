@@ -37,6 +37,9 @@ public slots:
     void slotWorking2Stop();
     void slotDefrost2Cooking();
     void slotStop2Idle();
+    void slotIdle2Clock();
+    void slotClock2Clock();
+    void slotClock2Idle();
 
 signals:
     //void CountTimeChanged(int s);
@@ -47,9 +50,13 @@ signals:
 private:
     Ui::MainWindow *ui;
 
-    QTimer *currentTimer;
-    QTimer *countTimer;
-    int m_secondCount = 0;
+    QTimer *defaultTimer; // Default Timer
+    QTimer *settingTimer; // Setting Timer
+    QTimer *countTimer;   // Countdown Timer
+    int m_countSeconds = 0;
+    int m_settingSeconds = 0;
+    int m_power = 0;
+    bool m_setClock = false;
 
     QStateMachine * mac;
     QState * stateWorking;
@@ -57,7 +64,12 @@ private:
     QState * stateIdle;
     QState * stateStop;
     QState * stateDefrost;
-
+    QState * stateClock;
+    QState * stateMode;
+    QState * statePower;
+    QState * stateDuration;
+    QState * stateSetHour;
+    QState * stateSetMinute;
 
 };
 #endif // MAINWINDOW_H
