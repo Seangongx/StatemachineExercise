@@ -26,7 +26,9 @@ public:
 public slots:
     // Class Slots
     void showDebug();
-    void tik_tok();
+    void showCurrentTime();
+    void tik_tok_up();
+    void tik_tok_down();
     void showDial();
     int getRandom(int min, int max);
     // State Slots:
@@ -36,10 +38,15 @@ public slots:
     void slotCooking2Cooking();
     void slotWorking2Stop();
     void slotDefrost2Cooking();
-    void slotStop2Idle();
+    //void slotStop2Idle();
     void slotIdle2Clock();
     void slotClock2Clock();
     void slotClock2Idle();
+    void slotIdle2Power();
+    void slotPower2Duration();
+    void slotDuration2Cooking();
+    void slotIdle2Mode();
+    void slotMode2Duration();
 
 signals:
     //void CountTimeChanged(int s);
@@ -49,6 +56,7 @@ signals:
 
 private:
     Ui::MainWindow *ui;
+    enum Mode {microwave = 1, grill, microwave_grill, error};
 
     QTimer *defaultTimer; // Default Timer
     QTimer *settingTimer; // Setting Timer
@@ -56,7 +64,10 @@ private:
     int m_countSeconds = 0;
     int m_settingSeconds = 0;
     int m_power = 0;
+    Mode m_mode = error;
     bool m_setClock = false;
+    bool m_setMode = false;
+    bool m_blockDisplay = false;
 
     QStateMachine * mac;
     QState * stateWorking;
@@ -64,12 +75,15 @@ private:
     QState * stateIdle;
     QState * stateStop;
     QState * stateDefrost;
-    QState * stateClock;
+    //QState * stateClock;
     QState * stateMode;
     QState * statePower;
     QState * stateDuration;
     QState * stateSetHour;
     QState * stateSetMinute;
+    QState * stateSetPower;
+    QState * stateSetMode;
+    QState * stateSetDuration;
 
 };
 #endif // MAINWINDOW_H

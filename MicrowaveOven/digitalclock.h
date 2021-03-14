@@ -5,6 +5,7 @@
 #include <QtWidgets>
 #include <QDebug>
 #include <QTimer>
+#include <QString>
 
 class DigitalClock : public QLCDNumber
 {
@@ -13,8 +14,9 @@ public:
     DigitalClock(QWidget *parent = 0);
 
 public slots:
-    void showDefaultTime();
+    void showDefaultTime(QTime t);
     void showSettingTime(int s);
+    void showRestofTime(int s);
     void showCount(int s);
 };
 

@@ -6,14 +6,12 @@ DigitalClock::DigitalClock(QWidget *parent)
     setSegmentStyle(Flat);// Outline, Filled and Flat
 }
 
-void DigitalClock::showDefaultTime()
+void DigitalClock::showDefaultTime(QTime t)
 {
-    QTime time = QTime::currentTime();
-    //qDebug() << time.hour() << "h" << time.minute() << "m" << time.second() << "s" << endl;
-    QString text = time.toString("hh:mm");
+    QString text = t.toString("hh:mm");
     setDigitCount(5);
     // glitter every second
-    if ((time.second() % 2) == 0) { text[2] = ' ';}
+    if ((t.second() % 2) == 0) { text[2] = ' ';}
     setDigitCount(5);
     setSegmentStyle(Flat);// Outline, Filled and Flat
     display(text);
@@ -34,6 +32,23 @@ void DigitalClock::showSettingTime(int s)
     setDigitCount(5);
     setSegmentStyle(Flat);
     //qDebug() << text << endl;
+    display(text);
+}
+
+void DigitalClock::showRestofTime(int s)
+{
+    if(s<0){
+        return;
+    }
+    int mins = s/60, seconds = s % 60;
+    //QString text;
+    QString tm = mins < 10? QString("0") + QString::number(mins) : QString::number(mins);
+    QString ts = seconds < 10? QString("0") + QString::number(seconds) : QString::number(seconds);
+    QString text = QString("%1:%3").arg(tm).arg(ts);
+    //setDigitCount(5);
+    if ((s % 2) == 0) { text[2] = ' ';}
+    setSegmentStyle(Flat);// Outline, Filled and Flat
+    qDebug() << text << endl;
     display(text);
 }
 
